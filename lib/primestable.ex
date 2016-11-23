@@ -1,0 +1,2 @@
+defmodule Primestable do
+end
