@@ -1,8 +1,9 @@
 defmodule Primestable do
 
-  def get_primes(n) do
+  def get_primes(n) when is_integer(n) and n > 0 do
     Enum.take primes, n
   end
+  def get_primes(_), do: []
 
   defp primes do 
     Stream.filter 2..100_000_000, &is_prime/1

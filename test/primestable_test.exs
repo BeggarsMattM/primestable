@@ -27,6 +27,7 @@ defmodule PrimestableTest do
   test "get_primes behaves correctly for silly inputs" do 
     assert get_primes(0) == []
     assert get_primes(-76) == []
+    assert get_primes("sandwich") == []
   end
 
 end
