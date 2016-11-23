@@ -5,7 +5,7 @@ defmodule Primestable do
   end
 
   defp primes do 
-    Enum.filter 2..10, &is_prime/1
+    Stream.filter 2..100_000_000, &is_prime/1
   end
 
   defp is_prime(2), do: true
