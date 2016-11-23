@@ -30,4 +30,8 @@ defmodule PrimestableTest do
     assert get_primes("sandwich") == []
   end
 
+  test "get the simplest primes table" do 
+    assert primes_table(1) ==
+      "|    |   2 |\n|   2 |   4|\n"
+  end
 end
