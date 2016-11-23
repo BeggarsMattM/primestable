@@ -10,5 +10,9 @@ defmodule PrimestableTest do
 
   test "gets the first two primes" do
     assert get_primes(2) == [2, 3]
-  end  
+  end
+
+  test "gets the first four primes" do
+    assert get_primes(4) == [2, 3, 5, 7]
+  end    
 end
