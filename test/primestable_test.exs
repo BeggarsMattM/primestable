@@ -32,7 +32,7 @@ defmodule PrimestableTest do
 
   test "get the simplest primes table" do 
     assert primes_table(1) ==
-      "|     |   2 |\n|   2 |   4 |\n"
+      "|     |   2 |\n|   2 |   4 |"
   end
 
   test "get the example primes table" do
@@ -40,6 +40,6 @@ defmodule PrimestableTest do
     "|     |   2 |   3 |   5 |\n" <>
     "|   2 |   4 |   6 |  10 |\n" <>
     "|   3 |   6 |   9 |  15 |\n" <>
-    "|   5 |  10 |  15 |  25 |\n"
+    "|   5 |  10 |  15 |  25 |"
   end  
 end

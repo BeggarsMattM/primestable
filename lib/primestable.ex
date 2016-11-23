@@ -22,12 +22,24 @@ defmodule Primestable do
     header_row(n) <> rows(n)
   end
 
-  def header_row(_) do
-    "|     |   2 |\n"
+  def header_row(n) do
+    "|     |" <> 
+    (get_primes(n) |> Enum.map(fn (x) -> "   #{x} |" end)
+                   |> Enum.join)
+    <> "\n"
   end
 
-  def rows(_) do
-    "|   2 |   4 |\n"
+  def rows(n) do
+      get_primes(n) |> Enum.map(row_maker(n))
+                    |> Enum.join("\n")
+  end
+
+  def row_maker(n) do
+    fn(x) -> 
+      "|   #{x} |" <>
+      (get_primes(n) |> Enum.map(fn (prime) -> String.pad_leading("#{x * prime} |", 6) end)
+                     |> Enum.join)
+    end
   end 
 
 end
