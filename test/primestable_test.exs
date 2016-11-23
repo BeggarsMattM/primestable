@@ -32,6 +32,6 @@ defmodule PrimestableTest do
 
   test "get the simplest primes table" do 
     assert primes_table(1) ==
-      "|    |   2 |\n|   2 |   4|\n"
+      "|     |   2 |\n|   2 |   4 |\n"
   end
 end
