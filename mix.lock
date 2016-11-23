@@ -1,0 +1,2 @@
+%{"exprintf": {:hex, :exprintf, "0.2.0"},
+  "exprof": {:hex, :exprof, "0.2.0"}}
