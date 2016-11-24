@@ -38,7 +38,7 @@ defmodule Primestable do
 
   def row_maker(n) do
     fn(x) -> 
-      "|   #{x} |" <> row_column_contents(n, x)
+      "|" <> String.pad_leading("#{x} |", 6) <> row_column_contents(n, x)
     end
   end 
 

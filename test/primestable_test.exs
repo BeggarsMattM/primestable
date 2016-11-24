@@ -43,10 +43,11 @@ defmodule PrimestableTest do
     "|   5 |  10 |  15 |  25 |"
   end
 
-  test "columns shouldn't expand get wider as the numbers increase"
+  test "columns shouldn't expand get wider as the numbers increase" do
     row_containing_3_digit_prime = 
       primes_table(5) |> String.split("\n")
                       |> List.last
     assert row_containing_3_digit_prime == 
-      "|  11 |  22 |  33 |  55 |  77 | 121 |"  
+      "|  11 |  22 |  33 |  55 |  77 | 121 |"
+  end      
 end
