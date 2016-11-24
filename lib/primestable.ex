@@ -23,11 +23,13 @@ defmodule Primestable do
   end
 
   def header_row(n) do
-    "|     |" <> 
-    (get_primes(n) |> Enum.map(fn (x) -> "   #{x} |" end)
-                   |> Enum.join)
-    <> "\n"
+    "|     |" <> header_row_columns(n) <> "\n"
   end
+
+  def header_row_columns(n) do
+    get_primes(n) |> Enum.map(fn (x) -> String.pad_leading("#{x} |", 6) end)
+                  |> Enum.join
+  end  
 
   def rows(n) do
       get_primes(n) |> Enum.map(row_maker(n))
@@ -36,10 +38,24 @@ defmodule Primestable do
 
   def row_maker(n) do
     fn(x) -> 
-      "|   #{x} |" <>
-      (get_primes(n) |> Enum.map(fn (prime) -> String.pad_leading("#{x * prime} |", 6) end)
-                     |> Enum.join)
+      "|   #{x} |" <> row_column_contents(n, x)
     end
   end 
+
+  def row_column_contents(n, x) do
+    get_primes(n) |> Enum.map(fn (prime) -> String.pad_leading("#{x * prime} |", 6) end)
+                  |> Enum.join
+  end
+
+  def main(args) do
+    args |> process
+  end
+  
+  def process([]) do 
+    IO.puts "Please enter numeric input N (for N prime numbers)"
+  end
+  def process(n) do
+    IO.puts primes_table(n)
+  end    
 
 end
