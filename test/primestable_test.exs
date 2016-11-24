@@ -49,5 +49,15 @@ defmodule PrimestableTest do
                       |> List.last
     assert row_containing_3_digit_prime == 
       "|  11 |  22 |  33 |  55 |  77 | 121 |"
-  end      
+  end
+
+  test "we should generate a neat table even if the table is huge" do
+    first_row_of_table = primes_table(30) |> String.split("\n") |> hd
+    last_row_of_table  = primes_table(30) |> String.split("\n") |> List.last
+    assert String.length(first_row_of_table) == String.length(last_row_of_table)
+  end
+
+  test "length of square of largest prime when N is 30" do 
+    assert largest_length_needed(30) == 5  
+  end  
 end
