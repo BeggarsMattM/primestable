@@ -23,11 +23,11 @@ defmodule Primestable do
   end
 
   def header_row(n) do
-    "|     |" <> header_row_columns(n) <> "\n"
+    "|" <> pad("", n) <> header_row_columns(n) <> "\n"
   end
 
   def header_row_columns(n) do
-    get_primes(n) |> Enum.map(fn (x) -> String.pad_leading("#{x} |", 6) end)
+    get_primes(n) |> Enum.map(fn (x) -> pad(x, n) end)
                   |> Enum.join
   end  
 
@@ -38,13 +38,28 @@ defmodule Primestable do
 
   def row_maker(n) do
     fn(x) -> 
-      "|" <> String.pad_leading("#{x} |", 6) <> row_column_contents(n, x)
+      "|" <> pad(x, n)<> row_column_contents(n, x)
     end
   end 
 
   def row_column_contents(n, x) do
-    get_primes(n) |> Enum.map(fn (prime) -> String.pad_leading("#{x * prime} |", 6) end)
+    get_primes(n) |> Enum.map(fn (prime) -> pad(prime * x, n) end)
                   |> Enum.join
+  end
+
+  def largest_length_needed(n) do
+    get_primes(n) |> List.last
+                  |> (&(&1 * &1)).()
+                  |> Integer.to_string
+                  |> String.length
+  end
+
+  def pad(str, n) when n < 3 do
+    String.pad_leading("#{str} |", 5)
+  end  
+  def pad(str, n) do
+    max_length = largest_length_needed(n)
+    String.pad_leading("#{str} |", max_length + 3)
   end
 
   def main(args) do
