@@ -59,9 +59,8 @@ defmodule Primestable do
   def process([]) do 
     IO.puts "Please enter numeric input N (for N prime numbers)"
   end
-  def process(n) do
-    IO.puts n
-    # IO.puts primes_table(n)
+  def process([n]) do
+    IO.puts primes_table(n |> String.to_integer)
   end    
 
 end
