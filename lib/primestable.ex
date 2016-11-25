@@ -3,11 +3,11 @@ defmodule Primestable do
   import Primes
 
   def primes_table_rec(primes, [], max_length, rows) do
-    [ row(primes, 1, max_length, "|" <> pad("", max_length)) | rows ] 
+    [ header_row(primes, max_length) | rows ] 
     |> Enum.join("\n")
   end
   def primes_table_rec(primes, [head|tail], max_length, rows) do
-    primes_table_rec(primes, tail, max_length, [ row(primes, head, max_length, "|" <> pad(head, max_length)) | rows ])
+    primes_table_rec(primes, tail, max_length, [ row(primes, head, max_length, first_col(head, max_length)) | rows ])
   end
 
   def primes_table(n) do
@@ -22,6 +22,14 @@ defmodule Primestable do
   end
 
   def square(x), do: x * x
+
+  def first_col(value, col_length) do
+    "|" <> pad(value, col_length)
+  end  
+
+  def header_row(primes, max_length) do
+    row(primes, 1, max_length, first_col("", max_length))
+  end  
 
   def row(_, [], _, _, result) do
     result  
