@@ -3,21 +3,22 @@ defmodule PrimestableTest do
   doctest Primestable
 
   import Primestable
+  import Primes
 
   test "gets the first prime" do
-    assert get_primes(1) == [2]
+    assert get_first_n_primes(1) == [2]
   end
 
   test "gets the first two primes" do
-    assert get_primes(2) == [2, 3]
+    assert get_first_n_primes(2) == [2, 3]
   end
 
   test "gets the first four primes" do
-    assert get_primes(4) == [2, 3, 5, 7]
+    assert get_first_n_primes(4) == [2, 3, 5, 7]
   end
   
   test "gets the first twenty primes" do 
-    assert get_primes(20) == 
+    assert get_first_n_primes(20) == 
       [ 2,  3,  5,  7, 11, 
        13, 17, 19, 23, 29,
        31, 37, 41, 43, 47,
@@ -25,9 +26,9 @@ defmodule PrimestableTest do
   end
 
   test "get_primes behaves correctly for silly inputs" do 
-    assert get_primes(0) == []
-    assert get_primes(-76) == []
-    assert get_primes("sandwich") == []
+    assert get_first_n_primes(0) == []
+    assert get_first_n_primes(-76) == []
+    assert get_first_n_primes("sandwich") == []
   end
 
   test "get the simplest primes table" do
