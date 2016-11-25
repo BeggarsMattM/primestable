@@ -23,7 +23,7 @@ defmodule Primestable do
 
   def square(x), do: x * x
 
-  def row(primes, [], current, max_length, result) do
+  def row(_, [], _, _, result) do
     result  
   end
   def row(primes, current, max_length, result) do
@@ -36,38 +36,6 @@ defmodule Primestable do
   def add_columns_to_row(primes, [head|tail], current, max_length, result) do
     add_columns_to_row(primes, tail, current, max_length, result <> pad(current * head, max_length))
   end  
-
-  def header_row(n) do
-    "|" <> pad("", n) <> header_row_columns(n) <> "\n"
-  end
-
-  def header_row_columns(n) do
-    get_first_n_primes(n) |> Enum.map(fn (x) -> pad(x, n) end)
-                  |> Enum.join
-  end  
-
-  def rows(n) do
-    Primes.get_first_n_primes(n) |> Enum.map(row_maker(n))
-                    |> Enum.join("\n")
-  end
-
-  def row_maker(n) do
-    fn(x) -> 
-      "|" <> pad(x, n)<> row_column_contents(n, x)
-    end
-  end 
-
-  def row_column_contents(n, x) do
-    Primes.get_first_n_primes(n) |> Enum.map(fn (prime) -> pad(prime * x, n) end)
-                  |> Enum.join
-  end
-
-  def largest_length_needed(n) do
-    Primes.get_first_n_primes(n) |> List.last
-                  |> (&(&1 * &1)).()
-                  |> Integer.to_string
-                  |> String.length
-  end
 
   def pad(str, max_length) when max_length < 3 do
     String.pad_leading("#{str} |", 5)
