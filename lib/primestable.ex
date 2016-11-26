@@ -1,30 +1,53 @@
 defmodule Primestable do
-
+  @moduledoc """
+  The Primestable module outputs a multiplication table of prime numbers.
+  """
   import Primes
 
-  def primes_table_rec(primes, [], max_length, rows) do
-    [ header_row(primes, max_length) | rows ] 
+  @doc """
+  Given numeric input N, outputs a table of N prime numbers. 
+
+  ## Example (N = 3)
+
+  |      |    2 |    3 |    5 |
+  |    2 |    4 |    6 |   10 |
+  |    3 |    6 |    9 |   15 |
+  |    5 |   10 |   15 |   25 |
+  """
+  def primes_table(n) do
+    primes         = get_first_n_primes(n)
+    primes_desc    = primes |> Enum.reverse
+    
+    # To ensure that all the cells are of equal width we need to know how
+    # large the largest value we need to contain is. This will be the length
+    # of the square of the largest prime. 
+    max_width  = primes_desc |> hd 
+                             |> square 
+                             |> Integer.to_string
+                             |> String.length
+    
+    primes_table_rec(primes, primes_desc, max_width, [])
+  end
+
+  defp square(n), do: n * n
+
+  # A recursive generator of our table. While the second argument is a list of
+  # primes we take the head and use it to generate a row which is added to the 
+  # front of our rows collection. Once we run out of primes we add a header 
+  # row and join together our list with newline characters.
+  defp primes_table_rec(primes, [current_prime|remaining_primes], max_width, rows) do
+    new_row = row(primes, current_prime, max_width, first_col(current_prime, max_width))
+    primes_table_rec(primes, remaining_primes, max_width, [ new_row | rows ])
+  end
+  defp primes_table_rec(primes, [], max_width, rows) do
+    [ header_row(primes, max_width) | rows ] 
     |> Enum.join("\n")
   end
-  def primes_table_rec(primes, [head|tail], max_length, rows) do
-    primes_table_rec(primes, tail, max_length, [ row(primes, head, max_length, first_col(head, max_length)) | rows ])
-  end
 
-  def primes_table(n) do
-    #header_row(n) <> rows(n)
-    primes     = get_first_n_primes(n)
-    rev_primes = primes |> Enum.reverse
-    max_length = rev_primes |> hd 
-                            |> square 
-                            |> Integer.to_string
-                            |> String.length
-    primes_table_rec(primes, rev_primes, max_length, [])
-  end
-
-  def square(x), do: x * x
-
-  def first_col(value, col_length) do
-    "|" <> pad(value, col_length)
+  # The first column has a starting "border" character and is a value (or 
+  # no value) padded to a width dependent on the max_width we calculated. 
+  defp first_col(value, max_width) do
+    "|" <> pad(value, max_width)
   end  
 
   def header_row(primes, max_length) do
