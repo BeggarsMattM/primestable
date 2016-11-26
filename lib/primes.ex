@@ -1,7 +1,11 @@
 defmodule Primes do
+  import ExProf.Macro
 
   def get_first_n_primes(n) when is_integer(n) and n > 0 do
-    Enum.take primes, n
+    profile do
+      Enum.take primes, n
+      IO.puts "message\n"
+    end  
   end
   def get_first_n_primes(_), do: []
 
@@ -18,4 +22,11 @@ defmodule Primes do
     Enum.all? 2..n-1, fn(x) -> rem(n, x) != 0 end
   end
 
+  def sieved(candidates, primes) do 
+    filtered_candidates = for candidate <- candidates, rem(candidate, hd(primes)) != 0, do: candidate
+    case filtered_candidates do
+      [] -> primes |> Enum.reverse
+      _  -> sieved(filtered_candidates, [ (hd(filtered_candidates)) | primes ])
+    end    
+  end
 end
