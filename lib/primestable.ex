@@ -50,29 +50,31 @@ defmodule Primestable do
     "|" <> pad(value, max_width)
   end  
 
+  # We will generate a row as we generate the table, by recursively adding
+  # columns until there is nothing left to do.
+  def row(primes, current, max_length, result) do
+     add_columns_to_row(primes, primes, current, max_length, result) 
+  end
+ 
+  # Keep concatenating columns to the result until no primes remaining,
+  # then return result. 
+  def add_columns_to_row(primes, [current_prime|remaining_primes], row_multiplier, max_width, result) do
+    next_col = pad(row_multiplier * current_prime, max_width)
+    add_columns_to_row(primes, remaining_primes, row_multiplier, max_width, result <> next_col)
+  end
+  def add_columns_to_row(_, [], _, _, result) do
+    result
+  end   
+
+  # The header row works like other rows, except the first column is empty
+  # and the multiplier for primes in successive columns is 1 (i.e identity)
   def header_row(primes, max_length) do
     row(primes, 1, max_length, first_col("", max_length))
   end  
 
-  def row(_, [], _, _, result) do
-    result  
-  end
-  def row(primes, current, max_length, result) do
-     add_columns_to_row(primes, primes, current, max_length, result) 
-  end
-
-  def add_columns_to_row(_, [], _, _, result) do
-    result
-  end  
-  def add_columns_to_row(primes, [head|tail], current, max_length, result) do
-    add_columns_to_row(primes, tail, current, max_length, result <> pad(current * head, max_length))
-  end  
-
-  def pad(str, max_length) when max_length < 3 do
-    String.pad_leading("#{str} |", 5)
-  end  
-  def pad(str, max_length) do
-    String.pad_leading("#{str} |", max_length + 3)
+  # We leading_pad all the columns according to the max_width we calculated 
+  def pad(str, max_width) do
+    String.pad_leading("#{str} |", max_width + 3)
   end
 
   def main(args) do
