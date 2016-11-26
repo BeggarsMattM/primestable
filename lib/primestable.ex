@@ -81,11 +81,11 @@ defmodule Primestable do
     args |> process
   end
   
-  def process([]) do 
-    IO.puts "Please enter numeric input N (for N prime numbers)"
-  end
   def process([n]) do
     IO.puts primes_table(n |> String.to_integer)
-  end    
+  end
+  def process(_) do 
+    IO.puts "Please enter single numeric input N (for N prime numbers)"
+  end
 
 end
