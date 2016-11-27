@@ -3,6 +3,7 @@ A test-driven Elixir application outputting a multiplication table of prime numb
 
 Can be run from the command line:
 
+```
 $ ./primestable 3
 |     |   2 |   3 |   5 |   7 |  11 |
 |   2 |   4 |   6 |  10 |  14 |  22 |
@@ -10,9 +11,11 @@ $ ./primestable 3
 |   5 |  10 |  15 |  25 |  35 |  55 |
 |   7 |  14 |  21 |  35 |  49 |  77 |
 |  11 |  22 |  33 |  55 |  77 | 121 |
+```
 
 Or from within iex after running `iex -S mix`:
 
+```
 iex(1)> IO.puts Primestable.primes_table 4
 |    |  2 |  3 |  5 |  7 |
 |  2 |  4 |  6 | 10 | 14 |
@@ -20,6 +23,7 @@ iex(1)> IO.puts Primestable.primes_table 4
 |  5 | 10 | 15 | 25 | 35 |
 |  7 | 14 | 21 | 35 | 49 |
 :ok
+```
 
 I was happy to be able to steadily whittle this down from some fairly
 overblown initial "ideas". I was delighted to learn more about approaches
