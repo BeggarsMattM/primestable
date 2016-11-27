@@ -26,7 +26,10 @@ defmodule Primestable do
                              |> Integer.to_string
                              |> String.length
     
-    primes_table_rec(primes, primes_desc, max_width, [])
+    #primes_table_rec(primes, primes_desc, max_width, [])
+
+    [ header_row(primes, max_width) | Enum.map(primes, &(row(primes, &1, max_width))) ]
+      |> Enum.join("\n")
   end
 
   defp square(n), do: n * n
@@ -52,15 +55,19 @@ defmodule Primestable do
 
   # We will generate a row as we generate the table, by recursively adding
   # columns until there is nothing left to do.
-  def row(primes, current, max_width, first_col) do
-     [ first_col | Enum.map(primes, &(pad(&1 * current, max_width))) ]
+  def row(primes, 1, max_width) do
+     [ first_col("", max_width) | Enum.map(primes, &(pad(&1, max_width))) ]
+        |> Enum.join
+  end
+  def row(primes, n, max_width) do
+     [ first_col(n, max_width) | Enum.map(primes, &(pad(&1 * n, max_width))) ]
         |> Enum.join
   end
 
   # The header row works like other rows, except the first column is empty
   # and the multiplier for primes in successive columns is 1 (i.e identity)
   def header_row(primes, max_width) do
-    row(primes, 1, max_width, first_col("", max_width))
+    row(primes, 1, max_width)
   end  
 
   # We leading_pad all the columns according to the max_width we calculated 
