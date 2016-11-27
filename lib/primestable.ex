@@ -16,36 +16,20 @@ defmodule Primestable do
   """
   def primes_table(n) do
     primes         = get_first_n_primes(n)
-    primes_desc    = primes |> Enum.reverse
     
     # To ensure that all the cells are of equal width we need to know how
     # large the largest value we need to contain is. This will be the length
     # of the square of the largest prime. 
-    max_width  = primes_desc |> hd 
-                             |> square 
-                             |> Integer.to_string
-                             |> String.length
+    max_width  = primes |> List.last 
+                        |> square 
+                        |> Integer.to_string
+                        |> String.length
     
-    #primes_table_rec(primes, primes_desc, max_width, [])
-
-    [ header_row(primes, max_width) | Enum.map(primes, &(row(primes, &1, max_width))) ]
-      |> Enum.join("\n")
+    [ 1 | primes ] |> Enum.map(&(row(primes, &1, max_width)))
+                   |> Enum.join("\n")
   end
 
   defp square(n), do: n * n
-
-  # A recursive generator of our table. While the second argument is a list of
-  # primes we take the head and use it to generate a row which is added to the 
-  # front of our rows collection. Once we run out of primes we add a header 
-  # row and join together our list with newline characters.
-  defp primes_table_rec(primes, [current_prime|remaining_primes], max_width, rows) do
-    new_row = row(primes, current_prime, max_width, first_col(current_prime, max_width))
-    primes_table_rec(primes, remaining_primes, max_width, [ new_row | rows ])
-  end
-  defp primes_table_rec(primes, [], max_width, rows) do
-    [ header_row(primes, max_width) | rows ] 
-    |> Enum.join("\n")
-  end
 
   # The first column has a starting "border" character and is a value (or 
   # no value) padded to a width dependent on the max_width we calculated. 
@@ -63,12 +47,6 @@ defmodule Primestable do
      [ first_col(n, max_width) | Enum.map(primes, &(pad(&1 * n, max_width))) ]
         |> Enum.join
   end
-
-  # The header row works like other rows, except the first column is empty
-  # and the multiplier for primes in successive columns is 1 (i.e identity)
-  def header_row(primes, max_width) do
-    row(primes, 1, max_width)
-  end  
 
   # We leading_pad all the columns according to the max_width we calculated 
   def pad(str, max_width) do
