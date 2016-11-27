@@ -52,24 +52,15 @@ defmodule Primestable do
 
   # We will generate a row as we generate the table, by recursively adding
   # columns until there is nothing left to do.
-  def row(primes, current, max_length, result) do
-     add_columns_to_row(primes, primes, current, max_length, result) 
+  def row(primes, current, max_width, first_col) do
+     [ first_col | Enum.map(primes, &(pad(&1 * current, max_width))) ]
+        |> Enum.join
   end
- 
-  # Keep concatenating columns to the result until no primes remaining,
-  # then return result. 
-  def add_columns_to_row(primes, [current_prime|remaining_primes], row_multiplier, max_width, result) do
-    next_col = pad(row_multiplier * current_prime, max_width)
-    add_columns_to_row(primes, remaining_primes, row_multiplier, max_width, result <> next_col)
-  end
-  def add_columns_to_row(_, [], _, _, result) do
-    result
-  end   
 
   # The header row works like other rows, except the first column is empty
   # and the multiplier for primes in successive columns is 1 (i.e identity)
-  def header_row(primes, max_length) do
-    row(primes, 1, max_length, first_col("", max_length))
+  def header_row(primes, max_width) do
+    row(primes, 1, max_width, first_col("", max_width))
   end  
 
   # We leading_pad all the columns according to the max_width we calculated 
