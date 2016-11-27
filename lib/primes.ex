@@ -1,78 +1,81 @@
 defmodule Primes do
-  #import ExProf.Macro
+  @moduledoc """
+  The Primes module generates a list of the first n prime numbers
+  using the Sieve of Eratosthenes.
+  """
 
+  @doc """
+  Given numeric input N, returns a list of N primes. 
+
+  ## Example (N = 10)
+
+  [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+  """
   def get_first_n_primes(n) when is_integer(n) and n > 0 do
-    #profile do
-      primes = Enum.take oneill_sieve, n
-      IO.inspect primes
-    #end  
+      Enum.take sieve, n
   end
   def get_first_n_primes(_), do: []
 
-  defp primes do 
-    Stream.filter 2..100_000_000, &is_prime/1
-  end
-
-  defp is_prime(n) when n < 2 do
-    raise "tried to check primality of number less then 2"
-  end  
-  defp is_prime(2), do: true
-  defp is_prime(n) do 
-    # a prime is not divisible by any number between 1 and itself
-    Enum.all? 2..n-1, fn(x) -> rem(n, x) != 0 end
-  end
-
-  def sieved(candidates, primes) do 
-    filtered_candidates = for candidate <- candidates, rem(candidate, hd(primes)) != 0, do: candidate
-    case filtered_candidates do
-      [] -> primes |> Enum.reverse
-      _  -> sieved(filtered_candidates, [ (hd(filtered_candidates)) | primes ])
-    end    
-  end
-
-  def different_sieve do
-    Stream.unfold(2..100_000, &next_prime/1)
-  end
-  def next_prime(collection) do
-    first = hd(Enum.take collection, 1)
-    new_collection = Stream.filter(collection, fn(x) -> rem(x, first) != 0 end)
-    {first, new_collection}
-  end
-
-  def oneill_sieve do
-    Stream.unfold(prelim_state, fn(state) -> {state.current, next(state)} end)
+  defp sieve do
+    Stream.unfold(start_state, fn(state) -> {state.current, step(state)} end)
   end  
 
-  def prelim_state do
-    %{current: 2, lookups: add_to(Map.new, 2)}
+  # The first prime is 2 and we create our first entry in the lookup table
+  # based on this, so that when we reach the next multiple of 2 (i.e. 4) it
+  # can be recognised as non-prime. 
+  defp start_state do
+    %{current: 2, lookups: add(Map.new, 2)}
   end
 
-  def next(%{current: current, lookups: lookups}) do
-    case lookups[current+1] do 
-      nil -> %{ current: current + 1, lookups: add_to(lookups, current+1) }
-      stream -> next(%{current: current + 1, lookups: amend_for(lookups, current + 1)}) 
+  # We look up the next consective integer in our lookup table. If we cannot
+  # find it we have a prime and so add a new entry to the table to flag up
+  # multiples of this new prime, then return the new state to the stream.
+  # If we find it, it's a non-prime and we must appropriately amend the lookup
+  # table before trying the next consecutive integer. 
+  defp step(%{current: current, lookups: lookups}) do
+    next = current + 1
+    case lookups[next] do 
+      nil -> %{ current: next, lookups: add( lookups, next ) }
+      _   -> step(%{ current: next, lookups: amend( lookups, next ) }) 
     end
   end
 
-  def add_to(lookups, current) do
+  # To add an entry to the lookup table for a prime we use its square for a key,
+  # and a tuple that "remembers" what prime we are eliminating multiples of, and
+  # what the following multiple in our "stream" is going to be. e.g.
+  # 2 -> 4 : { 2, 6 }
+  # 3 -> 9 : { 3, 12 }
+  # 13 -> 169 : { 13, 182 }
+  defp add(lookups, current) do
     Map.put_new lookups, current * current, {current, current * current + current}
   end
 
-  def cascade(map, key) do
+  # To amend an existing entry in the lookup table, we can use the stored next 
+  # value as a new key, and increment it by the prime of which these values 
+  # are multiples to find the next value in the stream. e.g.
+  # 4 : { 2, 6 } -> 6 : { 2, 8 }
+  # 9 : { 3, 12 } -> 12 : { 3, 15 }
+  # 169 : { 13, 182 } -> 182 : { 13, 195 }
+  # The new key may already exist as multiplier of a different prime! As such
+  # we must pass the value to a function that checks we don't overwrite anything. 
+  defp amend(lookups, current) do
+      {{multiple_of, next_value}, remaining_map} = Map.pop(lookups, current)
+      remaining_map |> cascade(next_value)
+                    |> Map.delete(next_value) 
+                    |> Map.put_new(next_value, {multiple_of, next_value + multiple_of}) 
+  end
+
+  # If we are about to delete and readd a key we want to check it doesn't already
+  # exist. If it doesn't we're fine and can take no action. If it does exist, we 
+  # need to update that key before it gets overwritten. This function must recurse
+  # "up the chain" until it knows that nothing will be overwritten at any point. 
+  defp cascade(map, key) do
       case map[key] do
         nil -> map
-        {multiple_of, key} -> cascade(map, key) |> Map.delete(key) |> Map.put_new(key, {multiple_of, key + multiple_of})
+        {multiple_of, key} -> 
+          cascade(map, key) |> Map.delete(key) 
+                            |> Map.put_new(key, {multiple_of, key + multiple_of})
       end
   end  
-
-  def amend_for(lookups, current) do
-      {{multiple_of, key}, remaining_map} = Map.pop(lookups, current)
-      remaining_map |> cascade(key)
-        # case Map.has_key?(remaining_map, key) do
-        #   true -> remaining_map |> Map.put_new(remaining_map[key] |> Enum.take(1) |> hd, Stream.drop(remaining_map[key], 1)) |> Map.delete(key)
-        #   false -> remaining_map
-        # end   
-       |> Map.delete(key) |> Map.put_new(key, {multiple_of, key + multiple_of}) 
-  end
 
 end
