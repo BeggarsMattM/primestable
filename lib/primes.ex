@@ -44,22 +44,23 @@ defmodule Primes do
   end  
 
   def prelim_state do
-    %{current: 2, lookups: HashDict.new}
+    %{current: 2, lookups: add_to(Map.new, 2)}
   end
 
   def next(%{current: current, lookups: lookups}) do
-    case lookups[current] do 
-      nil -> %{ current: current + 1, lookups: add_to(lookups, current) }
-      stream -> next(%{current: current + 1, lookups: amend_for(lookups, current)}) 
+    case lookups[current+1] do 
+      nil -> %{ current: current + 1, lookups: add_to(lookups, current+1) }
+      stream -> next(%{current: current + 1, lookups: amend_for(lookups, current + 1)}) 
     end
   end
 
   def add_to(lookups, current) do
-    lookups
+    Map.put_new lookups, current * current, Stream.map((current+1)..100_000, &(&1 * current))
   end  
 
   def amend_for(lookups, current) do
-    lookups
+      {lookup, remaining_map} = Map.pop(lookups, current)
+      Map.put_new remaining_map, Enum.take(lookup, 1) |> hd, Stream.drop(lookup, 1)
   end
 
 end
