@@ -31,26 +31,19 @@ defmodule Primestable do
 
   defp square(n), do: n * n
 
-  # The first column has a starting "border" character and is a value (or 
-  # no value) padded to a width dependent on the max_width we calculated. 
-  defp first_col(value, max_width) do
-    "|" <> pad(value, max_width)
-  end  
+  # Map columns to padded cells and then join to finish.
+  def row(primes, n, max_width) do    
+    col1_content = case n do
+      1 -> ""
+      _ -> n
+    end
+    
+    col1 = pad(col1_content, max_width)
+    cols = primes |> Enum.map(&(pad(&1 * n, max_width)))
 
-  # We will generate a row as we generate the table, by recursively adding
-  # columns until there is nothing left to do.
-  def row(primes, 1, max_width) do
-      col_1 = first_col("", max_width)
-      cols  = primes |> Enum.map(&(pad(&1, max_width)))
-
-      [ col_1 | cols ] |> Enum.join
+    ["|" | [col1 | cols]] |> Enum.join 
   end
-  def row(primes, n, max_width) do
-      col_1 = first_col(n, max_width)
-      cols  = primes |> Enum.map(&(pad(&1 * n, max_width)))
-     
-      [col_1 | cols] |> Enum.join
-  end
+ 
 
   # We leading_pad all the columns according to the max_width we calculated 
   def pad(str, max_width) do
