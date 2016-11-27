@@ -32,7 +32,7 @@ defmodule Primestable do
   defp square(n), do: n * n
 
   # Map columns to padded cells and then join to finish.
-  def row(primes, n, max_width) do    
+  defp row(primes, n, max_width) do    
     col1_content = case n do
       1 -> ""
       _ -> n
@@ -46,7 +46,7 @@ defmodule Primestable do
  
 
   # We leading_pad all the columns according to the max_width we calculated 
-  def pad(str, max_width) do
+  defp pad(str, max_width) do
     String.pad_leading("#{str} |", max_width + 3)
   end
 
