@@ -2,10 +2,10 @@ defmodule Primes do
   import ExProf.Macro
 
   def get_first_n_primes(n) when is_integer(n) and n > 0 do
-    profile do
+    #profile do
       primes = Enum.take oneill_sieve, n
       IO.inspect primes
-    end  
+    #end  
   end
   def get_first_n_primes(_), do: []
 
@@ -60,7 +60,13 @@ defmodule Primes do
 
   def amend_for(lookups, current) do
       {lookup, remaining_map} = Map.pop(lookups, current)
-      Map.put_new remaining_map, Enum.take(lookup, 1) |> hd, Stream.drop(lookup, 1)
+      key = lookup |> Enum.take(1) |> hd
+      remaining_map = 
+        case Map.has_key?(remaining_map, key) do
+          true -> remaining_map |> Map.put_new(remaining_map[key] |> Enum.take(1) |> hd, Stream.drop(remaining_map[key], 1)) |> Map.delete(key)
+          false -> remaining_map
+        end   
+      remaining_map |> Map.put_new(lookup |> Enum.take(1) |> hd, Stream.drop(lookup, 1))
   end
 
 end
