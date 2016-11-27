@@ -15,7 +15,7 @@ defmodule Primestable do
   |    5 |   10 |   15 |   25 |
   """
   def primes_table(n) do
-    primes         = get_first_n_primes(n)
+    primes = get_first_n_primes(n)
     
     # To ensure that all the cells are of equal width we need to know how
     # large the largest value we need to contain is. This will be the length
@@ -40,12 +40,16 @@ defmodule Primestable do
   # We will generate a row as we generate the table, by recursively adding
   # columns until there is nothing left to do.
   def row(primes, 1, max_width) do
-     [ first_col("", max_width) | Enum.map(primes, &(pad(&1, max_width))) ]
-        |> Enum.join
+      col_1 = first_col("", max_width)
+      cols  = primes |> Enum.map(&(pad(&1, max_width)))
+
+      [ col_1 | cols ] |> Enum.join
   end
   def row(primes, n, max_width) do
-     [ first_col(n, max_width) | Enum.map(primes, &(pad(&1 * n, max_width))) ]
-        |> Enum.join
+      col_1 = first_col(n, max_width)
+      cols  = primes |> Enum.map(&(pad(&1 * n, max_width)))
+     
+      [col_1 | cols] |> Enum.join
   end
 
   # We leading_pad all the columns according to the max_width we calculated 
