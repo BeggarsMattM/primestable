@@ -1,5 +1,5 @@
 defmodule Primes do
-  import ExProf.Macro
+  #import ExProf.Macro
 
   def get_first_n_primes(n) when is_integer(n) and n > 0 do
     #profile do
@@ -55,25 +55,24 @@ defmodule Primes do
   end
 
   def add_to(lookups, current) do
-    Map.put_new lookups, current * current, Stream.map((current+1)..100_000, &(&1 * current))
+    Map.put_new lookups, current * current, {current, current * current + current}
   end
 
   def cascade(map, key) do
       case map[key] do
         nil -> map
-        n   -> cascade(map, n |> Enum.take(1) |> hd) |> Map.put_new(n |> Enum.take(1) |> hd, Stream.drop(n, 1)) |> Map.delete(key)
+        {multiple_of, key} -> cascade(map, key) |> Map.delete(key) |> Map.put_new(key, {multiple_of, key + multiple_of})
       end
   end  
 
   def amend_for(lookups, current) do
-      {lookup, remaining_map} = Map.pop(lookups, current)
-      key = lookup |> Enum.take(1) |> hd
+      {{multiple_of, key}, remaining_map} = Map.pop(lookups, current)
       remaining_map |> cascade(key)
         # case Map.has_key?(remaining_map, key) do
         #   true -> remaining_map |> Map.put_new(remaining_map[key] |> Enum.take(1) |> hd, Stream.drop(remaining_map[key], 1)) |> Map.delete(key)
         #   false -> remaining_map
         # end   
-       |> Map.put_new(key, Stream.drop(lookup, 1)) 
+       |> Map.delete(key) |> Map.put_new(key, {multiple_of, key + multiple_of}) 
   end
 
 end
