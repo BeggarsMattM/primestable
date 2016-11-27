@@ -56,17 +56,24 @@ defmodule Primes do
 
   def add_to(lookups, current) do
     Map.put_new lookups, current * current, Stream.map((current+1)..100_000, &(&1 * current))
+  end
+
+  def cascade(map, key) do
+      case map[key] do
+        nil -> map
+        n   -> cascade(map, n |> Enum.take(1) |> hd) |> Map.put_new(n |> Enum.take(1) |> hd, Stream.drop(n, 1)) |> Map.delete(key)
+      end
   end  
 
   def amend_for(lookups, current) do
       {lookup, remaining_map} = Map.pop(lookups, current)
       key = lookup |> Enum.take(1) |> hd
-      remaining_map = 
-        case Map.has_key?(remaining_map, key) do
-          true -> remaining_map |> Map.put_new(remaining_map[key] |> Enum.take(1) |> hd, Stream.drop(remaining_map[key], 1)) |> Map.delete(key)
-          false -> remaining_map
-        end   
-      remaining_map |> Map.put_new(lookup |> Enum.take(1) |> hd, Stream.drop(lookup, 1))
+      remaining_map |> cascade(key)
+        # case Map.has_key?(remaining_map, key) do
+        #   true -> remaining_map |> Map.put_new(remaining_map[key] |> Enum.take(1) |> hd, Stream.drop(remaining_map[key], 1)) |> Map.delete(key)
+        #   false -> remaining_map
+        # end   
+       |> Map.put_new(key, Stream.drop(lookup, 1)) 
   end
 
 end
